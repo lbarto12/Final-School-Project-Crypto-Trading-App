@@ -29,7 +29,7 @@ public class ChartPage extends Master {
 
     private void init(){
         this.setLayout(this._layout);
-        this.chart = new Chart(this.window);
+        this.chart = new Chart(this.window, this.xAxis, this.yAxis);
 
         this.add(options, CPConstraints.WEST);
         this.add(info, CPConstraints.NORTH);

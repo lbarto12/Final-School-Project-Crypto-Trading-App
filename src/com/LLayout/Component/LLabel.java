@@ -4,23 +4,24 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 public class LLabel extends UIComponent<LLabel> {
-    public LLabel(){}
+    public LLabel() {
+    }
 
-    public LLabel(String text){
+    public LLabel(String text) {
         this.componentText = text;
     }
 
-//=================================================== Text =============================================================
-    private String scaleSizeToText(Rectangle2D textBound){
+    //=================================================== Text =============================================================
+    private String scaleSizeToText(Rectangle2D textBound) {
         boolean tooSmall = false;
-        if (this.visibleBounds.width < textBound.getWidth()){
+        if (this.visibleBounds.width < textBound.getWidth()) {
             //this.visibleBounds.width = (int)textBound.getWidth();
             this.visibleBounds.x = this.elementBounds.x + this.elementBounds.width / 2 - this.visibleBounds.width / 2;
             tooSmall = true;
         }
 
         // I literally have no clue why this works...
-        if (this.visibleBounds.height < textBound.getHeight() + this.visibleBounds.height / 6.f){
+        if (this.visibleBounds.height < textBound.getHeight() + this.visibleBounds.height / 6.f) {
             //this.visibleBounds.height = (int)textBound.getHeight();
             this.visibleBounds.y = this.elementBounds.y + this.elementBounds.height / 2 - this.visibleBounds.height / 2;
             tooSmall = true;
@@ -57,3 +58,4 @@ public class LLabel extends UIComponent<LLabel> {
         );
     }
 }
+

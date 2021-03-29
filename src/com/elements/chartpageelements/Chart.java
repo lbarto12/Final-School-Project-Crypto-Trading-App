@@ -3,6 +3,7 @@ package com.elements.chartpageelements;
 import com.LLayout.Component.LCanvas;
 import com.LLayout.Utility.Vector2L;
 import com.company.Main;
+import com.company.utility.DataFetcher;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -11,18 +12,19 @@ import java.util.Collections;
 
 public class Chart extends LCanvas implements MouseWheelListener, MouseMotionListener, MouseListener {
     private final Main window;
+    private final XAxis xAxis;
+    private final YAxis yAxis;
 
-    public Chart(Main window){
+    public Chart(Main window, XAxis xAxis, YAxis yAxis){
         this.window = window;
+        this.xAxis = xAxis;
+        this.yAxis = yAxis;
         this.init();
     }
 
     private int rangeShowing = 100;
     private float minPoint = 1;
     private int limit;
-
-    private ArrayList<Double> btcData = new ArrayList<>();
-    private ArrayList<Long> btcTimes = new ArrayList<>();
 
     private ArrayList<Double> currentData = new ArrayList<>();
     private ArrayList<Long> currentTimes = new ArrayList<>();
@@ -38,18 +40,8 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
 
         }
 
-        new Thread(() -> {
-            while (true){
-                this.addDataPoint(Math.random() * 100 + this.currentData.size());
+        new DataFetcher(this,"https://robinhood.com/crypto/BTC").start();
 
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                window.repaint();
-            }
-        }).start();
     }
 
     @Override
@@ -87,8 +79,11 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
                 this.minPoint = 1;
             else if (this.minPoint > this.currentData.size() - this.limit)
                 this.minPoint = this.currentData.size() - this.limit;
-            var tempData = this.currentData.subList((int)minPoint, (int)(minPoint + limit));
-            var tempTimes = this.currentTimes.subList((int)minPoint, (int)(minPoint + limit));
+            var tempData = new ArrayList<>(this.currentData.subList((int)minPoint, (int)(minPoint + limit)));
+            var tempTimes = new ArrayList<>(this.currentTimes.subList((int)minPoint, (int)(minPoint + limit)));
+
+            this.xAxis.updateLabels(tempTimes);
+            this.yAxis.updateLabels(tempData);
 
 
             double _max = Collections.max(tempData), _min = Collections.min(tempData);
@@ -96,8 +91,6 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
             double min = _min - ((_max - _min) * .1f);
             double xStep = (double) this.visibleBounds.width / ((double) limit);
             double yStep = (double) this.visibleBounds.height / (max - min);
-
-
 
             for (int i = (int)minPoint; i <= minPoint + limit && i < currentData.size(); i++) {
                 if (i == minPoint + limit || i == currentData.size() - 1) g.setColor(Color.GREEN);
@@ -117,10 +110,19 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
     public void addDataPoint(Double point){
         this.currentData.add(point);
         this.currentTimes.add(System.currentTimeMillis());
-        if (rangeShowing != 100 && (int)(this.minPoint + this.limit + 1) == this.currentData.size())
+        if (rangeShowing != 100 && (int)(this.minPoint + this.limit + 1) == this.currentData.size()){
             minPoint++;
+        }
+        this.window.repaint();
     }
 
+    public int getDataSize(){
+        return this.currentData.size();
+    }
+
+    public Double lastDataPoint(){
+        return this.currentData.get(this.currentData.size() - 1);
+    }
 
 // Handling Logic:
     @Override
@@ -151,7 +153,7 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
 
         if (
                 this.minPoint > 0
-                && this.minPoint <= this.currentData.size() - this.limit
+                && rangeShowing != 100
         ){
             float factor = (float)(clickPos.x - e.getX()) / (float)this.visibleBounds.width;
             float amount = limit * factor;
