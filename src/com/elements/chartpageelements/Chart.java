@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Chart extends LCanvas implements MouseWheelListener, MouseMotionListener, MouseListener {
-    private Main window;
+    private final Main window;
 
     public Chart(Main window){
         this.window = window;
@@ -21,9 +21,11 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
     private float minPoint = 1;
     private int limit;
 
-    private ArrayList<Double> btcData = new ArrayList();
+    private ArrayList<Double> btcData = new ArrayList<>();
+    private ArrayList<Long> btcTimes = new ArrayList<>();
 
-    private ArrayList<Double> currentData = new ArrayList();
+    private ArrayList<Double> currentData = new ArrayList<>();
+    private ArrayList<Long> currentTimes = new ArrayList<>();
 
     private void init(){
         this.window.addMouseWheelListener(this);
@@ -33,8 +35,21 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         this.setFillColor(Color.BLACK);
 
         for (int i = 0; i < 100; ++i){
-            this.currentData.add(Math.random() * 100);
+
         }
+
+        new Thread(() -> {
+            while (true){
+                this.addDataPoint(Math.random() * 100 + this.currentData.size());
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                window.repaint();
+            }
+        }).start();
     }
 
     @Override
@@ -59,22 +74,31 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
 
 
         g.setColor(Color.ORANGE);
-        if(currentData.size() > 0) {
+        if(currentData.size() > 1) {
 
-            this.limit = (int)(this.currentData.size() * (float)(this.rangeShowing / 100.f));
+            this.limit = (int)(this.currentData.size() * (this.rangeShowing / 100.f));
 
             if (this.currentData.size() - minPoint < limit){
                 this.limit = this.currentData.size() - (int)minPoint;
             }
 
-            double _max = Collections.max(currentData), _min = Collections.min(currentData);
+
+            if (minPoint < 1)
+                this.minPoint = 1;
+            else if (this.minPoint > this.currentData.size() - this.limit)
+                this.minPoint = this.currentData.size() - this.limit;
+            var tempData = this.currentData.subList((int)minPoint, (int)(minPoint + limit));
+            var tempTimes = this.currentTimes.subList((int)minPoint, (int)(minPoint + limit));
+
+
+            double _max = Collections.max(tempData), _min = Collections.min(tempData);
             double max = _max + ((_max - _min) * .1f);
             double min = _min - ((_max - _min) * .1f);
             double xStep = (double) this.visibleBounds.width / ((double) limit);
             double yStep = (double) this.visibleBounds.height / (max - min);
 
 
-            if (minPoint < 1) this.minPoint = 1;
+
             for (int i = (int)minPoint; i <= minPoint + limit && i < currentData.size(); i++) {
                 if (i == minPoint + limit || i == currentData.size() - 1) g.setColor(Color.GREEN);
                 g.drawLine(
@@ -89,6 +113,13 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
     }
 
 
+// data
+    public void addDataPoint(Double point){
+        this.currentData.add(point);
+        this.currentTimes.add(System.currentTimeMillis());
+        if (rangeShowing != 100 && (int)(this.minPoint + this.limit + 1) == this.currentData.size())
+            minPoint++;
+    }
 
 
 // Handling Logic:
@@ -97,7 +128,6 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         if (e.getWheelRotation() > 0){
             this.rangeShowing++;
             if (minPoint > 1) minPoint--;
-            else minPoint = 1;
         }
         else if (e.getWheelRotation() < 0){
             this.rangeShowing--;
@@ -120,17 +150,12 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
 
 
         if (
-                this.minPoint <= 100 && this.minPoint > 0
+                this.minPoint > 0
                 && this.minPoint <= this.currentData.size() - this.limit
         ){
             float factor = (float)(clickPos.x - e.getX()) / (float)this.visibleBounds.width;
             float amount = limit * factor;
             this.minPoint += amount;
-        }
-        if (this.minPoint > this.currentData.size() - this.limit)
-            this.minPoint = this.currentData.size() - this.limit;
-        else if (this.minPoint < 1){
-            this.minPoint = 1;
         }
 
         this.clickPos.x = e.getX();
@@ -139,17 +164,9 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         window.repaint();
     }
 
-    @Override
-    public void mouseMoved(MouseEvent e) {
 
-    }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    private Vector2L<Integer> clickPos = new Vector2L<>(0, 0);
+    private final Vector2L<Integer> clickPos = new Vector2L<>(0, 0);
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -157,17 +174,11 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         this.clickPos.y = e.getY();
     }
 
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
 
-    @Override
-    public void mouseEntered(MouseEvent e) {
 
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+    public void mouseMoved(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {}
 }
