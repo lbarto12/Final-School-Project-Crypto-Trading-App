@@ -14,7 +14,7 @@ public class ChartPage extends Master {
     public InfoPanel info = new InfoPanel();
     private XAxis xAxis = new XAxis();
     private YAxis yAxis = new YAxis();
-    private Chart chart;
+    public Chart chart;
 
     public ChartPage(Main window) {
         super(window);

@@ -133,6 +133,7 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         }
         else if (e.getWheelRotation() < 0){
             this.rangeShowing--;
+            if (minPoint < this.currentData.size() - 5 && this.rangeShowing > 10) minPoint++;
         }
 
 

@@ -6,6 +6,10 @@ import com.screens.ChartPage;
 import com.screens.PortFolio;
 import com.screens.State;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+
 public class Controller {
     private Main window;
     private ChartPage chartPage;
@@ -24,8 +28,14 @@ public class Controller {
         this.chartPage = new ChartPage(this.window);
         this.chartPage.options.portfolio.setOnClick(e -> {this.swap(State.PORTFOLIO);});
 
+        this.chartPage.options.buy.setOnClick(e -> {this.buy();});
+        this.chartPage.options.sell.setOnClick(e -> {this.sell();});
+
+        // Serialize?
         this.portFolio = new PortFolio(window);
 
+        this.updateBalanceLabel();
+        this.createInfoThread();
 
 
         this.window.add(this.chartPage);
@@ -50,5 +60,90 @@ public class Controller {
 
         this.window.add(this.currentMaster);
         new Thread(() -> {this.currentMaster.updateBounds();}).start();
+    }
+
+    private void buy(){
+        try {
+            this.portFolio.buy(
+                    Double.valueOf(this.chartPage.options.amount.getValue()),
+                    this.chartPage.chart.lastDataPoint()
+            );
+            this.updateBalanceLabel();
+        } catch (Exception ex){
+            System.out.println("invalid input");
+        }
+    }
+
+    private void sell(){
+        try {
+            this.portFolio.sell(
+                    Double.valueOf(this.chartPage.options.amount.getValue()),
+                    this.chartPage.chart.lastDataPoint()
+            );
+            this.updateBalanceLabel();
+        } catch (Exception ex){
+            System.out.println("invalid input");
+        }
+    }
+
+    private void updateBalanceLabel(){
+        this.chartPage.info.balanceInDollars.setText("Balance: $" +
+                String.valueOf(
+                        BigDecimal.valueOf(
+                                this.portFolio.getCurrentBalance()
+                        ).setScale(2, RoundingMode.HALF_UP).doubleValue()
+                )
+        );
+    }
+
+    private  boolean showExactBtc = true;
+
+    private void createInfoThread(){
+        new Thread(() ->{
+            this.chartPage.info.btcOwnedValue.setOnClick(e ->{showExactBtc = !showExactBtc; this.checkValueText();});
+
+            while (true){
+                try {
+                    this.chartPage.info.totalBalanceDollars.setText("Net Balance: $" +
+                            String.valueOf(
+                                    BigDecimal.valueOf(
+                                            this.portFolio.calculateTotalBalance(
+                                                    this.chartPage.chart.lastDataPoint()
+                                            )
+                                    ).setScale(2, RoundingMode.HALF_UP).doubleValue()
+                            )
+                    );
+
+                    this.checkValueText();
+
+                    this.chartPage.info.currentTime.setText(
+                            new SimpleDateFormat("MMM dd, hh:mm").format(System.currentTimeMillis())
+                    );
+                    Thread.sleep(1000);
+                } catch (Exception ignored) {}
+            }
+
+        }).start();
+    }
+
+    private void checkValueText(){
+        String temp = (showExactBtc) ?
+                String.valueOf(
+                        BigDecimal.valueOf(
+                                this.portFolio.getBtcOwned()
+                        ).setScale(5, RoundingMode.HALF_UP).doubleValue()
+                ):"$" +
+                String.valueOf(
+                        BigDecimal.valueOf(
+                                this.portFolio.getDollarValueOfOwned(
+                                        this.chartPage.chart.lastDataPoint()
+                                )
+                        ).setScale(2, RoundingMode.HALF_UP).doubleValue()
+                );
+
+
+        this.chartPage.info.btcOwnedValue.setText("BTC Owned: " +
+                temp
+        );
     }
 }

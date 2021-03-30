@@ -20,7 +20,7 @@ public class YAxis extends VerticalLayout {
 
     private void init(){
         for (int i = 0; i < 5; ++i){
-            this.stamps.add(new LLabel().setFillColor(Color.darkGray).setFontSize(10));
+            this.stamps.add(new LLabel("Wait...").setFillColor(Color.darkGray).setFontSize(12).setTextColor(Color.lightGray));
             this.add(this.stamps.get(i));
         }
     }

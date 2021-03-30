@@ -7,8 +7,8 @@ import org.jsoup.Jsoup;
 import java.util.ArrayList;
 
 public class DataFetcher extends Thread {
-    String link;
-    Chart chart;
+    private String link;
+    private Chart chart;
 
     public DataFetcher(Chart chart, String link){
         this.chart = chart;
