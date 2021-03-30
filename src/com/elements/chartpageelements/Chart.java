@@ -1,6 +1,7 @@
 package com.elements.chartpageelements;
 
 import com.LLayout.Component.LCanvas;
+import com.LLayout.Master;
 import com.LLayout.Utility.Vector2L;
 import com.company.Main;
 import com.company.utility.DataFetcher;
@@ -149,9 +150,6 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
-
-
         if (
                 this.minPoint > 0
                 && rangeShowing != 100

@@ -50,13 +50,28 @@ public class Controller {
         this.currentMaster.setVisible(false);
         this.window.remove(currentMaster);
 
+
         switch (Controller.state){
-            case CHART -> {this.currentMaster = this.chartPage;}
-            case PORTFOLIO -> {this.currentMaster = this.portFolio;}
+            case CHART -> {
+                this.currentMaster = this.chartPage;
+                this.window.addMouseListener(this.chartPage.chart);
+                this.window.addMouseMotionListener(this.chartPage.chart);
+                this.window.addMouseWheelListener(this.chartPage.chart);
+                this.window.removeMouseWheelListener(this.portFolio);
+            }
+            case PORTFOLIO -> {
+                this.currentMaster = this.portFolio;
+                this.window.removeMouseListener(this.chartPage.chart);
+                this.window.removeMouseMotionListener(this.chartPage.chart);
+                this.window.removeMouseWheelListener(this.chartPage.chart);
+                this.window.addMouseWheelListener(this.portFolio);
+            }
         }
 
         this.currentMaster.selected = true;
         this.currentMaster.setVisible(true);
+        //this.currentMaster.setFocusable(true);
+        //this.currentMaster.requestFocus();
 
         this.window.add(this.currentMaster);
         new Thread(() -> {this.currentMaster.updateBounds();}).start();
