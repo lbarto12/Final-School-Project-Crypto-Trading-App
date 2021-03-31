@@ -7,6 +7,7 @@ import com.LLayout.Layouts.HorizontalLayout;
 import com.LLayout.Master;
 import com.company.Main;
 import com.company.utility.Trade;
+import com.elements.chartpageelements.Chart;
 import com.elements.portfolioelements.UserInfo;
 
 import java.awt.*;
@@ -16,10 +17,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 public class PortFolio extends Master implements MouseWheelListener, Serializable {
-    private Main window;
+    private final Main window;
     private UserInfo userInfo;
 
     public PortFolio(Main window) {
@@ -48,6 +48,7 @@ public class PortFolio extends Master implements MouseWheelListener, Serializabl
                 super.windowClosing(e);
                 try {
                     PortFolio.savePortfolio(userInfo);
+                    Chart.saveDataPoints();
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
@@ -97,10 +98,9 @@ public class PortFolio extends Master implements MouseWheelListener, Serializabl
                     );
 
                     g.drawString(
-                            String.valueOf( "$" +
-                                    userInfo.trades.get(i).value
-                            ),
-                            this.visibleBounds.width / 5, overlap + this.visibleBounds.height / 2.f
+                            "$" +
+                                    userInfo.trades.get(i).value,
+                            this.visibleBounds.width / 5.f, overlap + this.visibleBounds.height / 2.f
                     );
 
                     g.drawString(

@@ -5,6 +5,7 @@ import com.LLayout.Master;
 import com.LLayout.Utility.Vector2L;
 import com.company.Main;
 import com.company.utility.DataFetcher;
+import com.company.utility.DataPoint;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -27,8 +28,9 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
     private float minPoint = 1;
     private int limit;
 
-    private ArrayList<Double> currentData = new ArrayList<>();
-    private ArrayList<Long> currentTimes = new ArrayList<>();
+    private final ArrayList<Double> currentData = new ArrayList<>();
+    private final ArrayList<Long> currentTimes = new ArrayList<>();
+
 
     private void init(){
         this.window.addMouseWheelListener(this);
@@ -43,6 +45,11 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
 
         new DataFetcher(this,"https://robinhood.com/crypto/BTC").start();
 
+
+        for (var i : Chart.loadDataPoints()){
+            this.currentData.add(i.price);
+            this.currentTimes.add(i.time);
+        }
     }
 
     @Override
@@ -114,6 +121,10 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         if (rangeShowing != 100 && (int)(this.minPoint + this.limit + 1) == this.currentData.size()){
             minPoint++;
         }
+
+        // Should save the point to the static arraylist, makes it easy to save to file
+        new DataPoint(this.currentData.get(currentData.size() - 1), this.currentTimes.get(currentTimes.size() - 1));
+
         this.window.repaint();
     }
 
@@ -123,6 +134,21 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
 
     public Double lastDataPoint(){
         return this.currentData.get(this.currentData.size() - 1);
+    }
+
+
+    public static void saveDataPoints(){
+        for (var i : DataPoint.all){
+            // save each point in a row, remember to start writing at first blank row!
+        }
+    }
+
+    public static ArrayList<DataPoint> loadDataPoints(){
+        var temp = new ArrayList<DataPoint>();
+
+        // Load points into temp and return it;
+
+        return temp;
     }
 
 // Handling Logic:

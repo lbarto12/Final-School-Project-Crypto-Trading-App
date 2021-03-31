@@ -1,5 +1,6 @@
 package com.elements.portfolioelements;
 
+import com.company.utility.DataPoint;
 import com.company.utility.Trade;
 
 import java.io.Serializable;
