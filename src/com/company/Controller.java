@@ -6,6 +6,9 @@ import com.screens.ChartPage;
 import com.screens.PortFolio;
 import com.screens.State;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -28,11 +31,17 @@ public class Controller {
         this.chartPage = new ChartPage(this.window);
         this.chartPage.options.portfolio.setOnClick(e -> {this.swap(State.PORTFOLIO);});
 
+
+
+
         this.chartPage.options.buy.setOnClick(e -> {this.buy();});
         this.chartPage.options.sell.setOnClick(e -> {this.sell();});
 
-        // Serialize?
-        this.portFolio = new PortFolio(window);
+        this.portFolio = new PortFolio(this.window);
+
+
+
+        this.portFolio.backButton.setOnClick(e ->{this.swap(State.CHART);});
 
         this.updateBalanceLabel();
         this.createInfoThread();
@@ -161,4 +170,7 @@ public class Controller {
                 temp
         );
     }
+
+
+
 }

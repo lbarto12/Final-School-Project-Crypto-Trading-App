@@ -1,6 +1,8 @@
 package com.company.utility;
 
-public class Trade {
+import java.io.Serializable;
+
+public class Trade implements Serializable {
     public Trade(Double value, Double price, Long time, Type type) {
         this.value = value;
         this.buyPrice = price;
