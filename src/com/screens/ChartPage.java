@@ -8,12 +8,12 @@ import com.company.Main;
 import com.elements.chartpageelements.*;
 
 public class ChartPage extends Master {
-    private Main window;
+    private final Main window;
     private final CenterPane _layout = new CenterPane();
     public OptionsPanel options;
     public InfoPanel info = new InfoPanel();
-    private XAxis xAxis = new XAxis();
-    private YAxis yAxis = new YAxis();
+    private final XAxis xAxis = new XAxis();
+    private final YAxis yAxis = new YAxis();
     public Chart chart;
 
     public ChartPage(Main window) {

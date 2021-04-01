@@ -17,13 +17,6 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
     private final XAxis xAxis;
     private final YAxis yAxis;
 
-    public Chart(Main window, XAxis xAxis, YAxis yAxis){
-        this.window = window;
-        this.xAxis = xAxis;
-        this.yAxis = yAxis;
-        this.init(false);
-    }
-
     public Chart(Main window, XAxis xAxis, YAxis yAxis, Boolean simulated){
         this.window = window;
         this.xAxis = xAxis;

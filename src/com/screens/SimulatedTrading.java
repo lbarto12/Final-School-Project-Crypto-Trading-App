@@ -18,10 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class SimulatedTrading extends Controller{
-    private ArrayList<DataPoint> points;
+    private final ArrayList<DataPoint> points;
 
     public SimulatedTrading(ArrayList<DataPoint> points) {
-        super(true);
+        super();
         this.points = points;
         this.init();
     }
@@ -40,7 +40,7 @@ public class SimulatedTrading extends Controller{
         this.window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         this.chartPage = new ChartPage(this.window, true);
-        this.chartPage.options.portfolio.setOnClick(e -> {this.swap(State.PORTFOLIO);});
+        this.chartPage.options.portfolio.setOnClick(e -> this.swap(State.PORTFOLIO));
 
         this.chartPage.options.amount.setPadding(2, 0);
 
@@ -71,14 +71,14 @@ public class SimulatedTrading extends Controller{
         }
 
 
-        this.chartPage.options.buy.setOnClick(e -> {this.buy();});
-        this.chartPage.options.sell.setOnClick(e -> {this.sell();});
+        this.chartPage.options.buy.setOnClick(e -> this.buy());
+        this.chartPage.options.sell.setOnClick(e -> this.sell());
 
         this.portFolio = new PortFolio(this.window, true);
 
 
 
-        this.portFolio.backButton.setOnClick(e ->{this.swap(State.CHART);});
+        this.portFolio.backButton.setOnClick(e -> this.swap(State.CHART));
 
 
         this.updateBalanceLabel();
@@ -156,13 +156,11 @@ public class SimulatedTrading extends Controller{
             while (this.runningSimulation){
                 try {
                     this.chartPage.info.totalBalanceDollars.setText("Net Balance: $" +
-                            String.valueOf(
-                                    BigDecimal.valueOf(
-                                            this.portFolio.calculateTotalBalance(
-                                                    this.chartPage.chart.lastDataPoint()
-                                            )
-                                    ).setScale(2, RoundingMode.HALF_UP).doubleValue()
-                            )
+                            BigDecimal.valueOf(
+                                    this.portFolio.calculateTotalBalance(
+                                            this.chartPage.chart.lastDataPoint()
+                                    )
+                            ).setScale(2, RoundingMode.HALF_UP).doubleValue()
                     );
 
                     this.checkValueText();

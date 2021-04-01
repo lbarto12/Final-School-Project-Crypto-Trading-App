@@ -13,8 +13,7 @@ public class XAxis extends HorizontalLayout {
         this.init();
     }
 
-    private ArrayList<Double> times = new ArrayList<>();
-    private ArrayList<LLabel> stamps = new ArrayList<>();
+    private final ArrayList<LLabel> stamps = new ArrayList<>();
 
     private void init(){
         this.add(new LLabel().setFillColor(Color.darkGray)); // Left Buffer

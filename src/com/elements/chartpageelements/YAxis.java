@@ -6,7 +6,6 @@ import com.LLayout.Layouts.VerticalLayout;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -15,8 +14,7 @@ public class YAxis extends VerticalLayout {
         this.init();
     }
 
-    private ArrayList<Double> prices = new ArrayList<>();
-    private ArrayList<LLabel> stamps = new ArrayList<>();
+    private final ArrayList<LLabel> stamps = new ArrayList<>();
 
     private void init(){
         for (int i = 0; i < 5; ++i){
@@ -34,13 +32,11 @@ public class YAxis extends VerticalLayout {
 
             for (int i = 0; i < 5; ++i) {
                 this.stamps.get(i).setText("$" +
-                        Double.toString(
-                                BigDecimal.valueOf(
-                                        max - (step * i)
-                                ).setScale(
-                                        5, RoundingMode.HALF_UP
-                                ).doubleValue()
-                        ) + " "
+                        BigDecimal.valueOf(
+                                max - (step * i)
+                        ).setScale(
+                                5, RoundingMode.HALF_UP
+                        ).doubleValue() + " "
                 );
             }
         } else {

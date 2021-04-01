@@ -1,6 +1,5 @@
 package com.company;
 
-import com.LLayout.Component.LButton;
 import com.LLayout.Master;
 import com.company.utility.DataPoint;
 import com.screens.ChartPage;
@@ -8,9 +7,6 @@ import com.screens.PortFolio;
 import com.screens.SimulatedTrading;
 import com.screens.State;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -30,26 +26,26 @@ public class Controller {
         this.window.setVisible(true);
     }
 
-    public Controller(boolean simulated){
+    public Controller(){
         this.window = new Main();
         this.window.setVisible(true);
     }
 
     private void init(){
         this.chartPage = new ChartPage(this.window);
-        this.chartPage.options.portfolio.setOnClick(e -> {this.swap(State.PORTFOLIO);});
+        this.chartPage.options.portfolio.setOnClick(e -> this.swap(State.PORTFOLIO));
 
 
 
 
-        this.chartPage.options.buy.setOnClick(e -> {this.buy();});
-        this.chartPage.options.sell.setOnClick(e -> {this.sell();});
+        this.chartPage.options.buy.setOnClick(e -> this.buy());
+        this.chartPage.options.sell.setOnClick(e -> this.sell());
 
         this.portFolio = new PortFolio(this.window);
 
 
 
-        this.portFolio.backButton.setOnClick(e ->{this.swap(State.CHART);});
+        this.portFolio.backButton.setOnClick(e -> this.swap(State.CHART));
 
         this.chartPage.options.tradeHistorical.setOnClick(e ->{
             ArrayList<DataPoint> temp = new ArrayList<>();
@@ -104,7 +100,7 @@ public class Controller {
         //this.currentMaster.requestFocus();
 
         this.window.add(this.currentMaster);
-        new Thread(() -> {this.currentMaster.updateBounds();}).start();
+        new Thread(() -> this.currentMaster.updateBounds()).start();
     }
 
     protected void buy(){
@@ -133,11 +129,9 @@ public class Controller {
 
     protected void updateBalanceLabel(){
         this.chartPage.info.balanceInDollars.setText("Balance: $" +
-                String.valueOf(
-                        BigDecimal.valueOf(
-                                this.portFolio.getCurrentBalance()
-                        ).setScale(2, RoundingMode.HALF_UP).doubleValue()
-                )
+                BigDecimal.valueOf(
+                        this.portFolio.getCurrentBalance()
+                ).setScale(2, RoundingMode.HALF_UP).doubleValue()
         );
     }
 
@@ -150,13 +144,11 @@ public class Controller {
             while (true){
                 try {
                     this.chartPage.info.totalBalanceDollars.setText("Net Balance: $" +
-                            String.valueOf(
-                                    BigDecimal.valueOf(
-                                            this.portFolio.calculateTotalBalance(
-                                                    this.chartPage.chart.lastDataPoint()
-                                            )
-                                    ).setScale(2, RoundingMode.HALF_UP).doubleValue()
-                            )
+                            BigDecimal.valueOf(
+                                    this.portFolio.calculateTotalBalance(
+                                            this.chartPage.chart.lastDataPoint()
+                                    )
+                            ).setScale(2, RoundingMode.HALF_UP).doubleValue()
                     );
 
                     this.checkValueText();
@@ -178,13 +170,11 @@ public class Controller {
                                 this.portFolio.getBtcOwned()
                         ).setScale(5, RoundingMode.HALF_UP).doubleValue()
                 ):"$" +
-                String.valueOf(
-                        BigDecimal.valueOf(
-                                this.portFolio.getDollarValueOfOwned(
-                                        this.chartPage.chart.lastDataPoint()
-                                )
-                        ).setScale(2, RoundingMode.HALF_UP).doubleValue()
-                );
+                BigDecimal.valueOf(
+                        this.portFolio.getDollarValueOfOwned(
+                                this.chartPage.chart.lastDataPoint()
+                        )
+                ).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
 
         this.chartPage.info.btcOwnedValue.setText("BTC Owned: " +

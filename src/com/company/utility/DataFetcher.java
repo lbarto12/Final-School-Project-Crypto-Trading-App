@@ -1,14 +1,11 @@
 package com.company.utility;
 
-import com.company.Main;
 import com.elements.chartpageelements.Chart;
 import org.jsoup.Jsoup;
 
-import java.util.ArrayList;
-
 public class DataFetcher extends Thread {
-    private String link;
-    private Chart chart;
+    private final String link;
+    private final Chart chart;
 
     public DataFetcher(Chart chart, String link){
         this.chart = chart;
