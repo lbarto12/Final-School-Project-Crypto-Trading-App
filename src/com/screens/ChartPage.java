@@ -10,7 +10,7 @@ import com.elements.chartpageelements.*;
 public class ChartPage extends Master {
     private Main window;
     private final CenterPane _layout = new CenterPane();
-    public OptionsPanel options = new OptionsPanel();
+    public OptionsPanel options;
     public InfoPanel info = new InfoPanel();
     private XAxis xAxis = new XAxis();
     private YAxis yAxis = new YAxis();
@@ -19,7 +19,13 @@ public class ChartPage extends Master {
     public ChartPage(Main window) {
         super(window);
         this.window = window;
-        this.init();
+        this.init(false);
+    }
+
+    public ChartPage(Main window, Boolean simulated) {
+        super(window);
+        this.window = window;
+        this.init(simulated);
     }
 
     public ChartPage add(LObject component, CPConstraints constraints) {
@@ -27,9 +33,12 @@ public class ChartPage extends Master {
         return this;
     }
 
-    private void init(){
+    private void init(Boolean simulated){
+        if (simulated) this.options = new OptionsPanel(true);
+        else this.options = new OptionsPanel();
+
         this.setLayout(this._layout);
-        this.chart = new Chart(this.window, this.xAxis, this.yAxis);
+        this.chart = new Chart(this.window, this.xAxis, this.yAxis, simulated);
 
         this.add(options, CPConstraints.WEST);
         this.add(info, CPConstraints.NORTH);

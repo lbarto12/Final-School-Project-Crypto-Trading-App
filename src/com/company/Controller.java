@@ -2,8 +2,10 @@ package com.company;
 
 import com.LLayout.Component.LButton;
 import com.LLayout.Master;
+import com.company.utility.DataPoint;
 import com.screens.ChartPage;
 import com.screens.PortFolio;
+import com.screens.SimulatedTrading;
 import com.screens.State;
 
 import java.awt.event.WindowAdapter;
@@ -12,18 +14,24 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 public class Controller {
-    private Main window;
-    private ChartPage chartPage;
-    private PortFolio portFolio;
-    private Master currentMaster;
+    protected Main window;
+    protected ChartPage chartPage;
+    protected PortFolio portFolio;
+    protected Master currentMaster;
 
     public static State state = State.CHART;
 
     public Controller(Main window){
         this.window = window;
         this.init();
+        this.window.setVisible(true);
+    }
+
+    public Controller(boolean simulated){
+        this.window = new Main();
         this.window.setVisible(true);
     }
 
@@ -43,6 +51,18 @@ public class Controller {
 
         this.portFolio.backButton.setOnClick(e ->{this.swap(State.CHART);});
 
+        this.chartPage.options.tradeHistorical.setOnClick(e ->{
+            ArrayList<DataPoint> temp = new ArrayList<>();
+            for (int i = 0; i < this.chartPage.chart.currentData.size(); ++i){
+                temp.add(new DataPoint(
+                        this.chartPage.chart.currentData.get(i),
+                        this.chartPage.chart.currentTimes.get(i),
+                        false
+                ));
+            }
+            new SimulatedTrading(temp);
+        });
+
         this.updateBalanceLabel();
         this.createInfoThread();
 
@@ -52,7 +72,8 @@ public class Controller {
     }
 
 
-    private void swap(State to){
+
+    protected void swap(State to){
         Controller.state = to;
 
         this.currentMaster.selected = false;
@@ -86,7 +107,7 @@ public class Controller {
         new Thread(() -> {this.currentMaster.updateBounds();}).start();
     }
 
-    private void buy(){
+    protected void buy(){
         try {
             this.portFolio.buy(
                     Double.valueOf(this.chartPage.options.amount.getValue()),
@@ -98,7 +119,7 @@ public class Controller {
         }
     }
 
-    private void sell(){
+    protected void sell(){
         try {
             this.portFolio.sell(
                     Double.valueOf(this.chartPage.options.amount.getValue()),
@@ -110,7 +131,7 @@ public class Controller {
         }
     }
 
-    private void updateBalanceLabel(){
+    protected void updateBalanceLabel(){
         this.chartPage.info.balanceInDollars.setText("Balance: $" +
                 String.valueOf(
                         BigDecimal.valueOf(
@@ -122,7 +143,7 @@ public class Controller {
 
     private  boolean showExactBtc = true;
 
-    private void createInfoThread(){
+    protected void createInfoThread(){
         new Thread(() ->{
             this.chartPage.info.btcOwnedValue.setOnClick(e ->{showExactBtc = !showExactBtc; this.checkValueText();});
 
@@ -150,7 +171,7 @@ public class Controller {
         }).start();
     }
 
-    private void checkValueText(){
+    protected void checkValueText(){
         String temp = (showExactBtc) ?
                 String.valueOf(
                         BigDecimal.valueOf(

@@ -1,7 +1,6 @@
 package com.elements.chartpageelements;
 
 import com.LLayout.Component.LCanvas;
-import com.LLayout.Master;
 import com.LLayout.Utility.Vector2L;
 import com.company.Main;
 import com.company.utility.DataFetcher;
@@ -11,7 +10,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class Chart extends LCanvas implements MouseWheelListener, MouseMotionListener, MouseListener {
@@ -23,33 +21,39 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         this.window = window;
         this.xAxis = xAxis;
         this.yAxis = yAxis;
-        this.init();
+        this.init(false);
+    }
+
+    public Chart(Main window, XAxis xAxis, YAxis yAxis, Boolean simulated){
+        this.window = window;
+        this.xAxis = xAxis;
+        this.yAxis = yAxis;
+        this.init(simulated);
     }
 
     private int rangeShowing = 100;
     private float minPoint = 1;
     private int limit;
 
-    private final ArrayList<Double> currentData = new ArrayList<>();
-    private final ArrayList<Long> currentTimes = new ArrayList<>();
+    public ArrayList<Double> currentData = new ArrayList<>();
+    public ArrayList<Long> currentTimes = new ArrayList<>();
 
 
-    private void init(){
+    private void init(Boolean simulated){
         this.window.addMouseWheelListener(this);
         this.window.addMouseMotionListener(this);
         this.window.addMouseListener(this);
 
         this.setFillColor(Color.BLACK);
 
-        for (int i = 0; i < 100; ++i){
 
-        }
+        if (!simulated){
+            new DataFetcher(this,"https://robinhood.com/crypto/BTC").start();
 
-        new DataFetcher(this,"https://robinhood.com/crypto/BTC").start();
-
-        for (var i : Chart.loadDataPoints()){
-            this.currentData.add(i.price);
-            this.currentTimes.add(i.time);
+            for (var i : Chart.loadDataPoints()){
+                this.currentData.add(i.price);
+                this.currentTimes.add(i.time);
+            }
         }
     }
 
@@ -88,8 +92,17 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
                 this.minPoint = 1;
             else if (this.minPoint > this.currentData.size() - this.limit)
                 this.minPoint = this.currentData.size() - this.limit;
-            var tempData = new ArrayList<>(this.currentData.subList((int)minPoint, (int)(minPoint + limit)));
-            var tempTimes = new ArrayList<>(this.currentTimes.subList((int)minPoint, (int)(minPoint + limit)));
+
+            ArrayList<Double> tempData;
+            ArrayList<Long> tempTimes;
+
+            try {
+                tempData = new ArrayList<>(this.currentData.subList((int)minPoint, (int)(minPoint + limit)));
+                tempTimes = new ArrayList<>(this.currentTimes.subList((int)minPoint, (int)(minPoint + limit)));
+            } catch (Exception e){
+                tempData = new ArrayList<>();
+                tempTimes = new ArrayList<>();
+            }
 
             this.xAxis.updateLabels(tempTimes);
             this.yAxis.updateLabels(tempData);
@@ -139,7 +152,7 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
 
 
     public static void saveDataPoints() throws IOException {
-        try (var out = new BufferedWriter(new FileWriter("data.csv", true));){
+        try (var out = new BufferedWriter(new FileWriter("data.csv", true))){
             for (var i : DataPoint.all){
                 out.write(String.valueOf(i.price));
                 out.write(',');
@@ -153,7 +166,7 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
     public static ArrayList<DataPoint> loadDataPoints() {
         var temp = new ArrayList<DataPoint>();
 
-        try (var in = new BufferedReader(new FileReader("data.csv"));){
+        try (var in = new BufferedReader(new FileReader("data.csv"))){
 
             String line = in.readLine();
             while (!line.equals("")){

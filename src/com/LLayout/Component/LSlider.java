@@ -23,7 +23,7 @@ public class LSlider extends UIComponent<LSlider> {
     private Vector2L<Integer> range = new Vector2L<>(1, 100);
     private Color ballColor = Color.LIGHT_GRAY;
     private final CircleL ball = new CircleL(10);
-    private boolean selected = false;
+    public boolean selected = false;
     private boolean setUp = true;
     private int value;
 
@@ -52,13 +52,16 @@ public class LSlider extends UIComponent<LSlider> {
     }
 
     public int getValue(){
-        return this.value = (int)(
+        return this.value;
+    }
+
+    private void assignValue(){
+        this.value = (int)(
                 (
                         (this.ball.getCenter().x - (this.visibleBounds.x + (float)this.visibleBounds.width / 8)) /
                                 (this.visibleBounds.x + (this.visibleBounds.width - (float)this.visibleBounds.width / 8) -
                                         (this.visibleBounds.x + (float)this.visibleBounds.width / 8))
-                ) * (this.range.y - this.range.x) + this.range.x
-        );
+                ) * (this.range.y - this.range.x) + this.range.x);
     }
 
     @Override
@@ -75,7 +78,7 @@ public class LSlider extends UIComponent<LSlider> {
                         e.getX() - 7,
                         this.ball.getCenter().y
                 ));
-                this.getValue();
+                this.assignValue();
             }
         }
     }

@@ -25,7 +25,13 @@ public class PortFolio extends Master implements MouseWheelListener, Serializabl
     public PortFolio(Main window) {
         super(window);
         this.window = window;
-        this.init();
+        this.init(false);
+    }
+
+    public PortFolio(Main window, Boolean simulated) {
+        super(window);
+        this.window = window;
+        this.init(simulated);
     }
 
     private LCanvas canvas;
@@ -34,27 +40,34 @@ public class PortFolio extends Master implements MouseWheelListener, Serializabl
             setFillColor(Color.darkGray).
             setTextColor(Color.WHITE);
 
-    private void init(){
+    private void init(Boolean simulated){
 
-        try {
-            this.userInfo = PortFolio.loadPortfolio();
-        } catch (Exception e) {
+
+
+        if (!simulated){
+            try {
+                this.userInfo = PortFolio.loadPortfolio();
+            } catch (Exception e) {
+                this.userInfo = new UserInfo();
+            }
+
+            this.window.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    super.windowClosing(e);
+                    try {
+                        PortFolio.savePortfolio(userInfo);
+                        Chart.saveDataPoints();
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+                    System.exit(0);
+                }
+            });
+        }
+        else{
             this.userInfo = new UserInfo();
         }
-
-        this.window.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                try {
-                    PortFolio.savePortfolio(userInfo);
-                    Chart.saveDataPoints();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
-                System.exit(0);
-            }
-        });
 
         this.canvas = new LCanvas(){
             @Override
