@@ -9,6 +9,13 @@ public class DataPoint {
         DataPoint.all.add(this);
     }
 
+    public DataPoint(Double price, Long time, Boolean addToList){
+        this.price = price;
+        this.time = time;
+        if (addToList)
+            DataPoint.all.add(this);
+    }
+
     public Double price;
     public Long time;
 

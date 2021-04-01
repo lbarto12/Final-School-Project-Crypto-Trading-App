@@ -9,7 +9,9 @@ import com.company.utility.DataPoint;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class Chart extends LCanvas implements MouseWheelListener, MouseMotionListener, MouseListener {
@@ -44,7 +46,6 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         }
 
         new DataFetcher(this,"https://robinhood.com/crypto/BTC").start();
-
 
         for (var i : Chart.loadDataPoints()){
             this.currentData.add(i.price);
@@ -137,16 +138,36 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
     }
 
 
-    public static void saveDataPoints(){
-        for (var i : DataPoint.all){
-            // save each point in a row, remember to start writing at first blank row!
+    public static void saveDataPoints() throws IOException {
+        try (var out = new BufferedWriter(new FileWriter("data.csv", true));){
+            for (var i : DataPoint.all){
+                out.write(String.valueOf(i.price));
+                out.write(',');
+                out.write(String.valueOf(i.time));
+                out.write('\n');
+            }
+
         }
     }
 
-    public static ArrayList<DataPoint> loadDataPoints(){
+    public static ArrayList<DataPoint> loadDataPoints() {
         var temp = new ArrayList<DataPoint>();
 
-        // Load points into temp and return it;
+        try (var in = new BufferedReader(new FileReader("data.csv"));){
+
+            String line = in.readLine();
+            while (!line.equals("")){
+                var split = line.split(",");
+                temp.add(new DataPoint(
+                        Double.valueOf(split[0]),
+                        Long.valueOf(split[1]),
+                        false
+                        )
+                );
+                line = in.readLine();
+            }
+
+        } catch (Exception ignored){ }
 
         return temp;
     }
