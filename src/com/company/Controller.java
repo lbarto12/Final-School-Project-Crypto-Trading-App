@@ -55,7 +55,7 @@ public class Controller {
     /**
      * Sets up the controller with:
      *      {@code ChartPage}
-     *      {@code Portfolio}
+     *      {@code PortFolio}
      * and adds them to the window
      */
     private void init(){
