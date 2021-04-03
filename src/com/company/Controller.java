@@ -92,7 +92,7 @@ public class Controller {
     }
 
     /**
-     * Swaps between displaying {@code ChartPage} & {@code Portfolio} respectively
+     * Swaps between displaying {@code ChartPage} & {@code PortFolio} respectively
      *
      * @param to New state to swap to
      */
