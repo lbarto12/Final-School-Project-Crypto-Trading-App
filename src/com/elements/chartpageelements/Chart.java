@@ -13,10 +13,30 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Chart extends LCanvas implements MouseWheelListener, MouseMotionListener, MouseListener {
+
+    /**
+     * Target window
+     */
     private final Main window;
+
+    /**
+     * Internal {@code XAxis} to display times
+     */
     private final XAxis xAxis;
+
+    /**
+     * Internal {@code YAxis} to display price points
+     */
     private final YAxis yAxis;
 
+    /**
+     * Default Constructor
+     *
+     * @param window Target window
+     * @param xAxis {@code XAxis} to display times on
+     * @param yAxis {@code YAxis} to display prices on
+     * @param simulated to denote whether this object is simulated
+     */
     public Chart(Main window, XAxis xAxis, YAxis yAxis, Boolean simulated){
         this.window = window;
         this.xAxis = xAxis;
@@ -24,14 +44,37 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         this.init(simulated);
     }
 
+    /**
+     * What percentage of the chart is being shown
+     */
     private int rangeShowing = 100;
+
+    /**
+     * Where to begin showing data from
+     */
     private float minPoint = 1;
+
+    /**
+     * Specific element range to show
+     */
     private int limit;
 
+    /**
+     * Internal {@code ArrayList<Double>} to store data point values
+     */
     public ArrayList<Double> currentData = new ArrayList<>();
+
+    /**
+     * Internal {@code ArrayList<Long>} to store time point values
+     */
     public ArrayList<Long> currentTimes = new ArrayList<>();
 
-
+    /**
+     * Initialize this. Adds component listeners, creates {@code DataFetcher} & loads
+     * pre-existing data from data.csv file
+     *
+     * @param simulated Denotes if this should be a simulated object
+     */
     private void init(Boolean simulated){
         this.window.addMouseWheelListener(this);
         this.window.addMouseMotionListener(this);
@@ -50,6 +93,13 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         }
     }
 
+    /**
+     * paintComponent Override
+     *
+     * Draws chart
+     *
+     * @param g {@code Graphics2D} object
+     */
     @Override
     public void paintComponent(Graphics2D g) {
         super.paintComponent(g);
@@ -121,7 +171,11 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
     }
 
 
-// data
+    /**
+     * Add new data point to {@code this.currentData} & {@code this.currentTimes}
+     *
+     * @param point Price to add
+     */
     public void addDataPoint(Double point){
         this.currentData.add(point);
         this.currentTimes.add(System.currentTimeMillis());
@@ -135,15 +189,26 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         this.window.repaint();
     }
 
+    /**
+     *
+     * @return data set size
+     */
     public int getDataSize(){
         return this.currentData.size();
     }
 
+    /**
+     * @return most recent data point added
+     */
     public Double lastDataPoint(){
         return this.currentData.get(this.currentData.size() - 1);
     }
 
-
+    /**
+     * Writes {@code DataPoint.all} to csv file
+     *
+     * @throws IOException
+     */
     public static void saveDataPoints() throws IOException {
         try (var out = new BufferedWriter(new FileWriter("data.csv", true))){
             for (var i : DataPoint.all){
@@ -156,6 +221,9 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         }
     }
 
+    /**
+     * @return loaded {@code ArrayList<DataPoint>} from data.csv
+     */
     public static ArrayList<DataPoint> loadDataPoints() {
         var temp = new ArrayList<DataPoint>();
 
@@ -178,7 +246,13 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         return temp;
     }
 
-// Handling Logic:
+    /**
+     * Implements {@code Interface MouseWheelListener}
+     *
+     * Changes amount displayed depending on scroll value
+     *
+     * @param e scroll event
+     */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (e.getWheelRotation() > 0){
@@ -201,6 +275,13 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
     }
 
 
+    /**
+     * Implements {@code Interface MouseMotionListener}
+     *
+     * Changes position displaying depending on drag ratio
+     *
+     * @param e mouse dragged event
+     */
     @Override
     public void mouseDragged(MouseEvent e) {
         if (
@@ -218,10 +299,18 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         window.repaint();
     }
 
-
-
+    /**
+     * Stores position of click
+     */
     private final Vector2L<Integer> clickPos = new Vector2L<>(0, 0);
 
+    /**
+     * Implements {@code Interface MouseListener}
+     *
+     * Sets clickPos to mouse position
+     *
+     * @param e mouse event
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         this.clickPos.x = e.getX();
@@ -229,7 +318,11 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
     }
 
 
-
+    /**
+     * Subsequent unused {@code Interface} implementations
+     *
+     * @param e event
+     */
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}

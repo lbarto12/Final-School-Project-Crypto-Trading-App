@@ -18,23 +18,46 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class SimulatedTrading extends Controller{
+
+    /**
+     * Internal {@code ArrayList<DataPoint>} to store data points
+     */
     private final ArrayList<DataPoint> points;
 
+    /**
+     * Default Constructor
+     *
+     * @param points data points to simulate
+     */
     public SimulatedTrading(ArrayList<DataPoint> points) {
         super();
         this.points = points;
         this.init();
     }
 
+
+    /**
+     * Internal {@code LSlider} to denote tick speed
+     */
     private final LSlider delaySlider = new LSlider(new Vector2L<>(1, 1000)).
             setPadding(2, 2).
             setBallRadius(7);
 
+    /**
+     * Internal {@code LTextField} to denote at what index to start the simulation
+     */
     private final LTextField startIndex = new LTextField().
             setText("0").
             setPadding(2, 2).
             setFillColor(Color.lightGray);
 
+    /**
+     * Initialize this
+     *
+     * Does the same thing as {@code Controller} without the saving and loading.
+     *
+     * Adds various {@code SimulatedTrading} specific {@code UIComponent}s
+     */
     private void init(){
         this.window.setTitle("Simulated");
         this.window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -89,12 +112,31 @@ public class SimulatedTrading extends Controller{
         this.currentMaster = this.chartPage;
     }
 
+    /**
+     * Internal {@code ArrayList<Double>} to store all prices
+     */
     private ArrayList<Double> savePrices;
+
+    /**
+     * Internal {@code ArrayList<Long>} to store all times
+     */
     private ArrayList<Long> saveTimes;
 
+    /**
+     * boolean to determine whether data point addition {@code Thread} is running
+     */
     private boolean runAppendThread = false;
+
+    /**
+     * Index to start simulation from
+     */
     private int runningIndex = 0;
 
+    /**
+     * Begins simulation from index
+     *
+     * @param index index to begin from
+     */
     private void beginFromIndex(int index){
         this.savePrices = new ArrayList<>(this.chartPage.chart.currentData);
         this.saveTimes = new ArrayList<>(this.chartPage.chart.currentTimes);
@@ -136,11 +178,14 @@ public class SimulatedTrading extends Controller{
         }).start();
     }
 
-
-
-    private boolean showExactBtc = true;
+    /**
+     * boolean to determine whether this simulation is running
+     */
     private boolean runningSimulation = true;
 
+    /**
+     * Overrides {@code Controller} method to destroy it if the simulation is over
+     */
     @Override
     protected void createInfoThread(){
         this.window.addWindowListener(new WindowAdapter() {

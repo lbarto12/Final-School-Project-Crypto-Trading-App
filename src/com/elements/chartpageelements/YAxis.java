@@ -10,12 +10,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class YAxis extends VerticalLayout {
+
+    /**
+     * Default Constructor
+     */
     public YAxis(){
         this.init();
     }
 
+    /**
+     * Internal {@code ArrayList<LLabel>} to store value labels
+     */
     private final ArrayList<LLabel> stamps = new ArrayList<>();
 
+    /**
+     * Initialize this. Adds labels to this
+     */
     private void init(){
         for (int i = 0; i < 5; ++i){
             this.stamps.add(new LLabel("Wait...").setFillColor(Color.darkGray).setFontSize(12).setTextColor(Color.lightGray));
@@ -23,7 +33,11 @@ public class YAxis extends VerticalLayout {
         }
     }
 
-
+    /**
+     * Update the data set to reflect current values
+     *
+     * @param data Data to copy from
+     */
     public void updateLabels(ArrayList<Double> data){
         if (data.size() > 1) {
             double max = Collections.max(data);

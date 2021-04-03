@@ -9,12 +9,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class XAxis extends HorizontalLayout {
+    /**
+     * Default Constructor
+     */
     public XAxis(){
         this.init();
     }
 
+    /**
+     * Internal {@code ArrayList<LLabel>} to store value labels
+     */
     private final ArrayList<LLabel> stamps = new ArrayList<>();
 
+    /**
+     * Initialize this. Adds labels to this
+     */
     private void init(){
         this.add(new LLabel().setFillColor(Color.darkGray)); // Left Buffer
         for (int i = 0; i < 5; ++i){
@@ -25,6 +34,11 @@ public class XAxis extends HorizontalLayout {
         this.add(new LLabel().setFillColor(Color.darkGray)); // Right buffer
     }
 
+    /**
+     * Update the data set to reflect current values
+     *
+     * @param data Data to copy from
+     */
     public void updateLabels(ArrayList<Long> data){
         if (data.size() > 1) {
             double max = Collections.max(data);
