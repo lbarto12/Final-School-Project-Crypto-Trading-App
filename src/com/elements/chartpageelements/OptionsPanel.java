@@ -41,11 +41,6 @@ public class OptionsPanel extends VerticalLayout {
     public LButton sell;
 
     /**
-     * Internal {@code LButton} to access indicators
-     */
-    public LButton indicators;
-
-    /**
      * Internal {@code LButton} to begins a {@code SimulatedTrading} session
      */
     public LButton tradeHistorical;
@@ -77,7 +72,6 @@ public class OptionsPanel extends VerticalLayout {
         this.sell = new LButton("Sell").
                 setPadding(2, 2).
                 setFillColor(new Color(200, 50, 50));
-        this.indicators = new LButton("Indicators").setPadding(2, 2);
 
 
         this.tradeHistorical = new LButton("Historical").
@@ -89,8 +83,7 @@ public class OptionsPanel extends VerticalLayout {
                         setPadding(2, 10, 2, 5),
                 amount,
                 buy,
-                sell,
-                indicators
+                sell
         );
 
         if (!simulated){

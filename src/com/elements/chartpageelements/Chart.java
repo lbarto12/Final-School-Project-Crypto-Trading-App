@@ -93,6 +93,10 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
         }
     }
 
+
+    private ArrayList<Double> tempData;
+    private ArrayList<Long> tempTimes;
+
     /**
      * paintComponent Override
      *
@@ -131,13 +135,10 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
             }
 
 
-            if (minPoint < 1)
-                this.minPoint = 1;
-            else if (this.minPoint > this.currentData.size() - this.limit)
-                this.minPoint = this.currentData.size() - this.limit;
+            if (minPoint < 1) minPoint = 1;
 
-            ArrayList<Double> tempData;
-            ArrayList<Long> tempTimes;
+
+
 
             try {
                 tempData = new ArrayList<>(this.currentData.subList((int)minPoint, (int)(minPoint + limit)));
@@ -284,14 +285,24 @@ public class Chart extends LCanvas implements MouseWheelListener, MouseMotionLis
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (
-                this.minPoint > 0
-                && rangeShowing != 100
-        ){
-            float factor = (float)(clickPos.x - e.getX()) / (float)this.visibleBounds.width;
+
+
+        System.out.println("min = " + minPoint);
+        System.out.println("limit = " + limit);
+        System.out.println("min + lim = " + (int)(this.minPoint + limit));
+        System.out.println("length = " + this.currentData.size());
+
+        if (this.clickPos.x - e.getX() < 0 && this.minPoint > 0 && rangeShowing != 100){
+            float factor = (float) (clickPos.x - e.getX()) / (float) this.visibleBounds.width;
             float amount = limit * factor;
             this.minPoint += amount;
         }
+        else if (this.clickPos.x - e.getX() > 0 &&  (int)(this.minPoint + limit) != this.currentData.size() && rangeShowing != 100){
+            float factor = (float) (clickPos.x - e.getX()) / (float) this.visibleBounds.width;
+            float amount = limit * factor;
+            this.minPoint += amount;
+        }
+        if (this.minPoint < 0) this.minPoint = 0;
 
         this.clickPos.x = e.getX();
         this.clickPos.y = e.getY();
